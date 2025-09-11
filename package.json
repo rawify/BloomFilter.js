@@ -1,0 +1,77 @@
+{
+    "name": "@rawify/bloomfilter",
+    "title": "BloomFilter",
+    "version": "0.0.1",
+    "description": "The RAW BloomFilter library, a fast, memory-efficient bloom filter implementation for membership checks.",
+    "homepage": "https://github.com/rawify/BloomFilter",
+    "bugs": "https://github.com/rawify/BloomFilter/issues",
+    "keywords": [
+        "bloom",
+        "filter",
+        "bloomfilter",
+        "set",
+        "membership",
+        "probabilistic",
+        "data-structure",
+        "bitset",
+        "hashing",
+        "lookup",
+        "cache",
+        "database",
+        "performance"
+    ],
+    "private": false,
+    "main": "./dist/bloomfilter.js",
+    "module": "./dist/bloomfilter.mjs",
+    "browser": "./dist/bloomfilter.min.js",
+    "unpkg": "./dist/bloomfilter.min.js",
+    "types": "./bloomfilter.d.ts",
+    "exports": {
+        ".": {
+            "types": {
+                "import": "./bloomfilter.d.mts",
+                "require": "./bloomfilter.d.ts"
+            },
+            "import": "./dist/bloomfilter.mjs",
+            "require": "./dist/bloomfilter.js",
+            "browser": "./dist/bloomfilter.min.js"
+        },
+        "./package.json": "./package.json"
+    },
+    "typesVersions": {
+        "<4.7": {
+            "*": [
+                "bloomfilter.d.ts"
+            ]
+        }
+    },
+    "sideEffects": false,
+    "repository": {
+        "type": "git",
+        "url": "git+ssh://git@github.com/rawify/BloomFilter.git"
+    },
+    "funding": {
+        "type": "github",
+        "url": "https://github.com/sponsors/rawify"
+    },
+    "author": {
+        "name": "Robert Eisele",
+        "email": "robert@raw.org",
+        "url": "https://raw.org/"
+    },
+    "license": "MIT",
+    "engines": {
+        "node": "*"
+    },
+    "directories": {
+        "test": "tests"
+    },
+    "scripts": {
+        "test": "mocha tests/*.js",
+        "build": "crude-build BloomFilter"
+    },
+    "devDependencies": {
+        "crude-build": "^0.1.0",
+        "mocha": "^11.7.2"
+    }
+}
