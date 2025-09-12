@@ -1,10 +1,10 @@
 {
     "name": "@rawify/bloomfilter",
-    "title": "BloomFilter",
-    "version": "0.0.1",
+    "title": "BloomFilter.js",
+    "version": "0.0.2",
     "description": "The RAW BloomFilter library, a fast, memory-efficient bloom filter implementation for membership checks.",
-    "homepage": "https://github.com/rawify/BloomFilter",
-    "bugs": "https://github.com/rawify/BloomFilter/issues",
+    "homepage": "https://github.com/rawify/BloomFilter.js",
+    "bugs": "https://github.com/rawify/BloomFilter.js/issues",
     "keywords": [
         "bloom",
         "filter",
@@ -71,7 +71,7 @@
         "build": "crude-build BloomFilter"
     },
     "devDependencies": {
-        "crude-build": "^0.1.0",
+        "crude-build": "^0.1.3",
         "mocha": "^11.7.2"
     }
 }

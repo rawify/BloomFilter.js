@@ -1,6 +1,6 @@
 /**
- * @license BloomFilter v0.0.1 9/11/2025
- * https://github.com/rawify/BloomFilter
+ * @license BloomFilter.js v0.0.2 9/12/2025
+ * https://github.com/rawify/BloomFilter.js
  *
  * Copyright (c) 2025, Robert Eisele (https://raw.org/)
  * Licensed under the MIT license.

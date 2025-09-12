@@ -154,7 +154,7 @@ const bf2 = BloomFilter.fromJSON(dump);
 
 ## Coding Style
 
-Like all my libraries, BloomFilter is written to minimize size after compression with Google Closure Compiler in advanced mode. The code style is optimized to maximize compressibility. If you extend the library, please preserve this style.
+Like all my libraries, BloomFilter.js is written to minimize size after compression with Google Closure Compiler in advanced mode. The code style is optimized to maximize compressibility. If you extend the library, please preserve this style.
 
 
 ## Building the library
