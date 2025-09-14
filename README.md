@@ -15,10 +15,32 @@ They are particularly useful as **pre-checks** in situations where a lookup or r
 - Bit-level operations inspired by [BitSet.js](https://github.com/rawify/BitSet.js)
 - Support for binary and string keys (UTF-8 encoded once)
 - High-quality double hashing (Kirsch–Mitzenmacher) with Murmur3-style hashes
+- Enhanced double hashing (ENH) + xor mixing for accuracy
 - Optional power-of-two optimization for constant-time masking
 - Union and intersection of Bloom filters
 - Live estimates: fill ratio, cardinality, false-positive rate
 - Compact base64 serialization and restoration
+
+## Implementation Notes & Accuracy
+
+Bloom filters are simple in concept but easy to implement poorly. Some implementations (see [RocksDB issue #4120](https://github.com/facebook/rocksdb/issues/4120)) suffer from:
+
+1. **Poor probe distribution**:
+   If the “step” size between indices is zero or not coprime with the filter size, the same few positions get probed repeatedly. This silently increases the false-positive rate.
+
+2. **Weak hashing**:
+   Deriving all indices from the same 32-bit hash with only rotations/XOR can create subtle correlations between indices, especially in medium-sized filters.
+
+**BloomFilter.js** avoids these pitfalls:
+
+* Uses **two independent Murmur3 32-bit hashes** instead of reusing one, ensuring high-quality entropy.
+* Always forces the step to be **odd**, and when the bit count is a power of two (default), this guarantees full-cycle probing with no repeats.
+* For non-power-of-two filters, it applies **Enhanced Double Hashing (ENH)** so indices remain well distributed even when gcd(step, m) ≠ 1.
+* Adds a cheap **xor mixing step** to decorrelate the two hash streams further.
+
+As a result, the accuracy of this implementation closely tracks the theoretical false-positive rates, even for small or non-standard filter sizes.
+
+> ⚡ **Note:** Binary Fuse and XOR filters can outperform Bloom filters on **static sets** (lower bits/item, faster lookups), but they are not a drop-in replacement. Bloom filters remain the better choice when you need **online updates**, **unions/intersections**, or compatibility with streaming workloads.
 
 ## Installation
 

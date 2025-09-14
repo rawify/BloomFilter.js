@@ -1,5 +1,5 @@
 /**
- * @license BloomFilter.js v0.0.2 9/12/2025
+ * @license BloomFilter.js v0.0.3 9/14/2025
  * https://github.com/rawify/BloomFilter.js
  *
  * Copyright (c) 2025, Robert Eisele (https://raw.org/)
@@ -39,14 +39,22 @@ class BloomFilter {
     /** Insert a single key. Accepts string, Uint8Array, ArrayBuffer(View), or anything coercible to string. */
     add(key) {
         const { h1, h2 } = this._hashPair(key);
+
         const m = this._bitCount;
         const k = this._hashCount;
         const mask = this._indexMask;
-        const step = (h2 | 1) >>> 0; // keep step odd
+
+        // Cheap mixing + Enhanced Double Hashing (ENH)
+        let h = (h1 ^ 0x6740bca3) >>> 0;       // cheap XOR mix
+        let delta = (h2 | 1) >>> 0;            // keep odd; will evolve per-iteration
+
         for (let i = 0; i < k; i++) {
-            let idx = (h1 + Math.imul(i, step)) >>> 0;
-            idx = mask ? (idx & mask) : (idx % m);
+            const idx = mask ? (h & mask) : (h % m);
             setBit(this._bitset, idx);
+
+            // ENH: evolve delta and base so we don't rely on gcd(step, m)
+            delta = (delta + i) >>> 0;
+            h = (h + delta) >>> 0;
         }
         this._addCalls++;
         return this;
@@ -67,14 +75,22 @@ class BloomFilter {
      */
     mightContain(key) {
         const { h1, h2 } = this._hashPair(key);
+
         const m = this._bitCount;
         const k = this._hashCount;
         const mask = this._indexMask;
-        const step = (h2 | 1) >>> 0;
+
+        // Cheap mixing + Enhanced Double Hashing (ENH)
+        let h = (h1 ^ 0x6740bca3) >>> 0;       // cheap XOR mix
+        let delta = (h2 | 1) >>> 0;            // keep odd; will evolve per-iteration
+
         for (let i = 0; i < k; i++) {
-            let idx = (h1 + Math.imul(i, step)) >>> 0;
-            idx = mask ? (idx & mask) : (idx % m);
+            const idx = mask ? (h & mask) : (h % m);
             if (!getBit(this._bitset, idx)) return false; // definitely not present
+
+            // ENH progression
+            delta = (delta + i) >>> 0;
+            h = (h + delta) >>> 0;
         }
         return true; // possibly present
     }
@@ -189,7 +205,7 @@ class BloomFilter {
         let m = mAligned;
         if (usePowerOfTwoBits) {
             const pow2 = nextPowerOfTwo(m);
-            if (pow2 > m) 
+            if (pow2 > m)
                 m = pow2; // slightly oversize for mask speed
         }
         const words = (m + 31) >>> 5;
@@ -267,13 +283,13 @@ function murmur32(bytes, seed = 0) {
 
 /** Convert key to Uint8Array once (strings via TextEncoder). */
 function coerceToBytes(utf8, x) {
-    if (typeof x === 'string') 
+    if (typeof x === 'string')
         return utf8.encode(x);
-    if (x instanceof Uint8Array) 
+    if (x instanceof Uint8Array)
         return x;
-    if (ArrayBuffer.isView(x) && x.buffer) 
+    if (ArrayBuffer.isView(x) && x.buffer)
         return new Uint8Array(x.buffer, x.byteOffset, x.byteLength);
-    if (x instanceof ArrayBuffer) 
+    if (x instanceof ArrayBuffer)
         return new Uint8Array(x);
     return utf8.encode(String(x));
 }
@@ -323,7 +339,7 @@ function isPowerOfTwo(x) {
 function u32ToBase64(u32) {
     const bytes = new Uint8Array(u32.buffer, u32.byteOffset, u32.byteLength);
     let s = '';
-    for (let i = 0; i < bytes.length; i++) 
+    for (let i = 0; i < bytes.length; i++)
         s += String.fromCharCode(bytes[i]);
     return btoa(s);
 }
@@ -332,7 +348,7 @@ function u32ToBase64(u32) {
 function base64ToU32(b64, expectedWords) {
     const bin = atob(b64);
     const bytes = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i++) 
+    for (let i = 0; i < bin.length; i++)
         bytes[i] = bin.charCodeAt(i);
     const pad = (4 - (bytes.byteLength & 3)) & 3;
     let buf = bytes;
