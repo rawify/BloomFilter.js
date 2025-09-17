@@ -1,9 +1,9 @@
 {
     "name": "@rawify/bloomfilter",
     "title": "BloomFilter.js",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "The RAW BloomFilter library, a fast, memory-efficient bloom filter implementation for membership checks.",
-    "homepage": "https://github.com/rawify/BloomFilter.js",
+    "homepage": "https://raw.org/book/algorithms/bloomfilter/",
     "bugs": "https://github.com/rawify/BloomFilter.js/issues",
     "keywords": [
         "bloom",
